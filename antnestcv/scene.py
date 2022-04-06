@@ -7,30 +7,30 @@ from antnestcv.ant import Ant
     1. Implementar 'grab food'
         1.1 Compute the centers of each food's contour
         1.2 
-    2. Implementar as trails: (pixel food_img) passa para (pixel trails)    
+    2. Implementar as trails: (pixel food_layer) passa para (pixel trails)    
 '''
 class Scene:
-    def __init__(self, background: np.array, food_img: np.array):
+    def __init__(self, background: np.array, food_layer: np.array):
         
         '''
             self.backgroud: 3 channel image
-            self.food_img: 3 channel image 
+            self.food_layer: 3 channel image 
             self.food_bw: 1 channel image
             self.food_contours: list[np.array([y,x]), np.array([y,x]), ..]
 
         '''
 
         self.background = background
-        self.ants_mask = np.zeros_like(background)
+        self.ants_layer = np.zeros_like(background)
         self.trails = np.zeros_like(background)
-        self.food_img = food_img
+        self.food_layer = food_layer
         self.food_contours: list = []
 
-        if self.food_img is not None:
-            self.food_bw = cv2.cvtColor(self.food_img, cv2.COLOR_BGR2GRAY)
+        if self.food_layer is not None:
+            self.food_bw = cv2.cvtColor(self.food_layer, cv2.COLOR_BGR2GRAY)
             self.food_contours = self.find_food_contours()
                         
-            assert self.background.shape == self.food_img.shape
+            assert self.background.shape == self.food_layer.shape
             
                         
             
@@ -70,15 +70,15 @@ class Scene:
             #scene: background + food  
             self.scene = cv2.addWeighted(
                 src1 = self.background, alpha = 1,
-                src2 = self.food_img, beta = 1,
+                src2 = self.food_layer, beta = 1,
                 gamma = 1)
 
         else:
-            self.food_img = np.zeros_like(self.background)
+            self.food_layer = np.zeros_like(self.background)
             #scene: background + food
             self.scene = cv2.addWeighted(
                 src1 = self.background, alpha = 1,
-                src2 = self.food_img, beta = 1,
+                src2 = self.food_layer, beta = 1,
                 gamma = 1)
 
     @staticmethod
@@ -134,28 +134,28 @@ class Scene:
 
                 ant's position (y,x) is limited to background shape
             '''
-        #*maintain (or clean) the mask:
-        self.ants_mask = np.zeros_like(self.background)
+        #*maintain (or clean) the layer:
+        self.ants_layer = np.zeros_like(self.background)
         
         background_height = self.background.shape[0]
         background_width = self.background.shape[1]
         for ant in ant_list:
            
-            self.ants_mask[ant.pos_y, ant.pos_x, 0] = ant.color['b']
-            self.ants_mask[ant.pos_y, ant.pos_x, 1] = ant.color['g']
-            self.ants_mask[ant.pos_y, ant.pos_x, 2] = ant.color['r']
+            self.ants_layer[ant.pos_y, ant.pos_x, 0] = ant.color['b']
+            self.ants_layer[ant.pos_y, ant.pos_x, 1] = ant.color['g']
+            self.ants_layer[ant.pos_y, ant.pos_x, 2] = ant.color['r']
 
             ant.ant_move(
                 ymax = background_height,
                 xmax = background_width,
                 pixel_step = 1)
                 
-            dy = ant.pos_y - self.food_center_position['y']
-            dx = ant.pos_x - self.food_center_position['x']
+            # dy = ant.pos_y - self.food_center_position['y']
+            # dx = ant.pos_x - self.food_center_position['x']
             
-            ant.lift_food(
-                food_center_pos = self.food_center_position,
-                tolerance = 1)
+            # ant.lift_food(
+            #     food_center_pos = self.food_center_position,
+            #     tolerance = 1)
 
     def display(self, ant_list: list, wait_key: int = 1):
 
@@ -165,7 +165,7 @@ class Scene:
 
             #scene: background + ants + food
             scene = cv2.addWeighted(    src1 = self.scene, alpha = 1,
-                                        src2 = self.ants_mask, beta = 1,
+                                        src2 = self.ants_layer, beta = 1,
                                         gamma = 1)
             
             cv2.namedWindow('scene',cv2.WINDOW_GUI_EXPANDED)

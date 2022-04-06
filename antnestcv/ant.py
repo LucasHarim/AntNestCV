@@ -5,17 +5,17 @@ from random import sample
 class Ant:
 
     
-    def __init__(self, spawn_position: tuple, color: dict = {'b':0, 'g':0, 'r':255}):
+    def __init__(self, spawn_position: dict, color: dict = {'b':0, 'g':0, 'r':255}):
         
         '''
-            spawn_position: (y0, x0)
+            spawn_position: {'x', 'y'}
             color: {'b' ,'g', 'r'} ( b,g,r E [0,255])
 
         '''
 
         self.spawn_position = spawn_position
-        self.pos_y = spawn_position[0]
-        self.pos_x = spawn_position[1]
+        self.pos_y = spawn_position['y']
+        self.pos_x = spawn_position['x']
         self.color = color
         self.bag: list = []
         

@@ -33,7 +33,7 @@ def show_img(image):
 if __name__ == '__main__':
     
     show_img(candy_bw)
-    
+    print(type(candy_contours[0].squeeze()[:, 1]))
     
     
       

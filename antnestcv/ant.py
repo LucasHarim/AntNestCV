@@ -17,7 +17,7 @@ class Ant:
         self.pos_y = spawn_position[0]
         self.pos_x = spawn_position[1]
         self.color = color
-        
+        self.bag: list = []
         
     def ant_move(self, ymax: int, xmax: int,pixel_step: int) -> None:
         
@@ -50,8 +50,21 @@ class Ant:
         self.pos_y = min(ymax, abs(self.pos_y))
         self.pos_x = min(xmax, abs(self.pos_x))
 
+
+    def lift_food(self, food_center_pos: dict, tolerance: int):
+        dy = abs(self.pos_y - food_center_pos['y'])
+        dx = abs(self.pos_x - food_center_pos['x'])
+
+        lift_bool = ((dx < tolerance) & (dy < tolerance))
+
+        if lift_bool is True:
+            self.bag.append(1)
+
         '''
             #TODO: 
-            Ajeitar o movimento aleatório para nao permitir 
-            sair de 0 -> ymax, xmax
+            1. AddAjeitar o movimento aleatório para nao permitir 
+                sair de 0 -> ymax, xmax
+            2. Add 'grab/catch food' and colision functions
+            3. Improve lift_food function. I need to implement a more sofisti_
+            cated method to find the food 
         '''

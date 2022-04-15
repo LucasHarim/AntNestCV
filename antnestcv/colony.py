@@ -25,6 +25,9 @@ class Colony:
         
         self.ants_move_y = np.zeros(shape = (1, self.init_num_ants), dtype= int)
         self.ants_move_x = np.zeros(shape = (1, self.init_num_ants), dtype= int)
+        
+        self.food_array = np.zeros(shape = (1, self.init_num_ants), dtype= int)
+
 
     def init_ants(self):
         ant_list = []
@@ -47,7 +50,8 @@ class Colony:
         '''
         ymax -= 1
         xmax -= 1
-
+        
+        # RANDOM movements
         #Note: The 'high' param is exclusive
         self.ants_move_y = np.random.randint(low = -1, high = 2, size = self.init_num_ants, dtype = int)
         self.ants_move_x = np.random.randint(low = -1, high = 2, size = self.init_num_ants, dtype = int)
@@ -56,3 +60,16 @@ class Colony:
         self.ants_pos_y = np.clip( self.ants_pos_y + self.ants_move_y, a_min = 0, a_max = ymax)
         self.ants_pos_x = np.clip( self.ants_pos_x + self.ants_move_x, a_min = 0, a_max = xmax)
     
+    def i_have_food(self, food_layer: np.array) -> None:
+        
+        '''
+            food_layer: 3 channel image
+            food_bool: np.array([bool values])
+            example: self.food_bool([True, True, False, ..]) means that ants 
+            with indexes 0 and 1 have food, whereas ant 2 have not.
+        
+            Implement a method to verify if an ant is over the food or not
+        '''
+
+
+

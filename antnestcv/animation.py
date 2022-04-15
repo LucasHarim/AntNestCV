@@ -1,6 +1,7 @@
 import numpy as np
 import cv2
 from antnestcv.ant import Ant
+from antnestcv.colony import Colony
 
 '''
     #TODO
@@ -9,7 +10,7 @@ from antnestcv.ant import Ant
         1.2 
     2. Implementar as trails: (pixel food_layer) passa para (pixel trails)    
 '''
-class Scene:
+class Animation:
     def __init__(self, background: np.array, food_layer: np.array):
         
         '''
@@ -123,7 +124,7 @@ class Scene:
    
   
 
-    def ant_update_positions(self, ant_list: list):
+    def ant_update_positions(self, colony_list: list):
         
         '''
                 blue ant: channel 0
@@ -139,29 +140,20 @@ class Scene:
         
         background_height = self.background.shape[0]
         background_width = self.background.shape[1]
-        for ant in ant_list:
-           
-            self.ants_layer[ant.pos_y, ant.pos_x, 0] = ant.color['b']
-            self.ants_layer[ant.pos_y, ant.pos_x, 1] = ant.color['g']
-            self.ants_layer[ant.pos_y, ant.pos_x, 2] = ant.color['r']
 
-            ant.ant_move(
-                ymax = background_height,
-                xmax = background_width,
-                pixel_step = 1)
-                
-            # dy = ant.pos_y - self.food_center_position['y']
-            # dx = ant.pos_x - self.food_center_position['x']
+        for colony in colony_list:
             
-            # ant.lift_food(
-            #     food_center_pos = self.food_center_position,
-            #     tolerance = 1)
+            colony.update_ants_positions(ymax = background_height, xmax = background_width)
+            self.ants_layer[colony.ants_pos_y, colony.ants_pos_x, 0] = colony.color['b']
+            self.ants_layer[colony.ants_pos_y, colony.ants_pos_x, 1] = colony.color['g']
+            self.ants_layer[colony.ants_pos_y, colony.ants_pos_x, 2] = colony.color['r']
 
-    def display(self, ant_list: list, wait_key: int = 1):
+
+    def display(self, colony_list: list, wait_key: int = 1):
 
         while True:
             
-            self.ant_update_positions(ant_list = ant_list)
+            self.ant_update_positions(colony_list = colony_list)
 
             #scene: background + ants + food
             scene = cv2.addWeighted(    src1 = self.scene, alpha = 1,

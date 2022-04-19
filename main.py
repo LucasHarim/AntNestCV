@@ -6,6 +6,7 @@ from antnestcv.ant import Ant
 from antnestcv.colony import Colony
 
 food_img = cv2.imread('antnestcv/img_src/food/food.png')
+
 background_img = np.zeros_like(food_img)
 
 # background_img = np.zeros(shape = (500, 800, 3), dtype = np.uint8)
@@ -13,17 +14,17 @@ background_img = np.zeros_like(food_img)
 # background_img = cv2.imread('antnestcv/img_src/backgrounds/sand.jpg')
 
 spartans = Colony(   name='Spartans',
-                        init_num_ants = 10000,
-                        spawn_position = {'x': 10, 'y': 10},
+                        init_num_ants = 500,
+                        spawn_position = {'x': 200, 'y': 200},
                         color = {'b': 250, 'g':0, 'r':200})
 
 persas = Colony(   name='Persas',
-                        init_num_ants = 50000,
+                        init_num_ants = 500,
                         spawn_position = {'x': 250, 'y': 400},
                         color = {'b': 0, 'g':200, 'r':250})
 
 gregos = Colony(   name='Gregos',
-                        init_num_ants = 20000,
+                        init_num_ants = 200,
                         spawn_position = {'x': 350, 'y': 450},
                         color = {'b': 250, 'g': 200, 'r':100})
 

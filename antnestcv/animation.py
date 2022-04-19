@@ -2,6 +2,7 @@ import numpy as np
 import cv2
 from antnestcv.ant import Ant
 from antnestcv.colony import Colony
+from antnestcv.food import Food
 
 '''
     #TODO
@@ -24,107 +25,11 @@ class Animation:
         self.background = background
         self.ants_layer = np.zeros_like(background)
         self.trails = np.zeros_like(background)
-        self.food_layer = food_layer
-        self.food_contours: list = []
+        self.food = Food(food_layer = food_layer) #TODO: self.food added. I need
+        # to update this code
+          
 
-        if self.food_layer is not None:
-            self.food_bw = cv2.cvtColor(self.food_layer, cv2.COLOR_BGR2GRAY)
-            self.food_contours = self.find_food_contours()
-                        
-            assert self.background.shape == self.food_layer.shape
-            
-                        
-            
-            ##*uncomment to draw the contours:
-            # cv2.drawContours(
-            #     image = self.scene,
-            #     contours = self.food_contours,
-            #     contourIdx = -1,
-            #     color = (255,0,0),
-            #     thickness = 2)
-
-            ##*Considering just one piece of food (len(self.food_contours = 1)):
-            self.food_contours = self.food_contours[0].squeeze()
-                        
-            #Compute the center of a piece of food:
-            self.food_center_position = {
-                'x':  int(np.mean(self.food_contours[:,0])),
-                'y': int(np.mean(self.food_contours[:,1]))}
-            
-            self.food_mean_radius = self.compute_mean_radius(
-                food_contour_x_pts = self.food_contours[:,0],
-                food_contour_y_pts = self.food_contours[:,1],
-                food_center = self.food_center_position)
-
-            self.background[self.food_center_position['y'], self.food_center_position['x']] = [255, 255, 255]
-            
-            ##*Uncomment to draw circle
-            cv2.circle(
-                self.background,
-                (self.food_center_position['x'],
-                self.food_center_position['y']), 
-                self.food_mean_radius,
-                (50,50,50), 1)
-
-
-
-            #scene: background + food  
-            self.scene = cv2.addWeighted(
-                src1 = self.background, alpha = 1,
-                src2 = self.food_layer, beta = 1,
-                gamma = 1)
-
-        else:
-            self.food_layer = np.zeros_like(self.background)
-            #scene: background + food
-            self.scene = cv2.addWeighted(
-                src1 = self.background, alpha = 1,
-                src2 = self.food_layer, beta = 1,
-                gamma = 1)
-
-    @staticmethod
-    def compute_mean_radius(    food_contour_x_pts: np.array,
-                                food_contour_y_pts: np.array,
-                                food_center: dict) -> int:
-        
-        dy = food_contour_y_pts - food_center['y']
-        dx = food_contour_x_pts - food_center['x']
-        distances = np.sqrt(dx**2 + dy**2)
-        
-        mean_radius = int(np.mean(distances))
-
-        return mean_radius
-
-
-
-
-    def find_food_contours(self) -> list:
-        '''
-            Find the edges of the food (target).
-            Only contours with more than 50 points will be considered.
-
-            -> _contours: list(np.array)
-            -> self.food_contours: list(np.array), we can consider each array as 
-            the contour of a food object.
-           
-           https://docs.opencv.org/3.4/d4/d73/tutorial_py_contours_begin.html             
-        '''
-        _ , thresh = cv2.threshold(self.food_bw, 0, 255, 0)
-        _contours, _ = cv2.findContours(
-                        thresh,
-                        cv2.RETR_EXTERNAL,
-                        cv2.CHAIN_APPROX_NONE)
-        
-        
-        for contour in _contours:
-            if len(contour) > 50:
-                self.food_contours.append(contour)
-        
-        return self.food_contours
-   
-  
-
-    def ant_update_positions(self, colony_list: list):
+    def update_state(self, colony_list: list):
         
         '''
                 blue ant: channel 0
@@ -143,18 +48,27 @@ class Animation:
 
         for colony in colony_list:
             
+            #* Update Ant's positions:
             colony.update_ants_positions(ymax = background_height, xmax = background_width)
             self.ants_layer[colony.ants_pos_y, colony.ants_pos_x, 0] = colony.color['b']
             self.ants_layer[colony.ants_pos_y, colony.ants_pos_x, 1] = colony.color['g']
             self.ants_layer[colony.ants_pos_y, colony.ants_pos_x, 2] = colony.color['r']
 
+            #*Update food:
+            self.food.update_food(ants_pos_x = colony.ants_pos_x, ants_pos_y = colony.ants_pos_y)
 
     def display(self, colony_list: list, wait_key: int = 1):
 
         while True:
             
-            self.ant_update_positions(colony_list = colony_list)
-
+            self.update_state(colony_list = colony_list)
+            
+            #scene: background + food  
+            self.scene = cv2.addWeighted(
+                src1 = self.background, alpha = 1,
+                src2 = self.food.food_layer, beta = 1,
+                gamma = 1)
+            
             #scene: background + ants + food
             scene = cv2.addWeighted(    src1 = self.scene, alpha = 1,
                                         src2 = self.ants_layer, beta = 1,

@@ -20,14 +20,17 @@ class Colony:
         self.spawn_position = spawn_position
         self.color = color
 
-        self.ants_pos_y = self.spawn_position['y']*np.ones(shape = (1, self.init_num_ants), dtype= int)
-        self.ants_pos_x = self.spawn_position['x']*np.ones(shape = (1, self.init_num_ants), dtype= int)
-        
+        self.ants_pos_y = self.spawn_position['y']*np.ones(shape = (self.init_num_ants), dtype= int)
+        self.ants_pos_x = self.spawn_position['x']*np.ones(shape = (self.init_num_ants), dtype= int)
+        self.positions = None
         self.ants_move_y = np.zeros(shape = (1, self.init_num_ants), dtype= int)
         self.ants_move_x = np.zeros(shape = (1, self.init_num_ants), dtype= int)
         
         self.food_array = np.zeros(shape = (1, self.init_num_ants), dtype= int)
 
+        self.ive_food = np.zeros(shape = (1, self.init_num_ants), dtype = bool)
+        # self.food_bool_x = np.zeros(shape = (1, self.init_num_ants), dtype = bool)
+        # self.food_bool_y = np.zeros(shape = (1, self.init_num_ants), dtype= bool)
 
     def init_ants(self):
         ant_list = []
@@ -51,7 +54,7 @@ class Colony:
         ymax -= 1
         xmax -= 1
         
-        # RANDOM movements
+        #RANDOM movements
         #Note: The 'high' param is exclusive
         self.ants_move_y = np.random.randint(low = -1, high = 2, size = self.init_num_ants, dtype = int)
         self.ants_move_x = np.random.randint(low = -1, high = 2, size = self.init_num_ants, dtype = int)
@@ -59,17 +62,23 @@ class Colony:
         #limit pos_y and pos_x values
         self.ants_pos_y = np.clip( self.ants_pos_y + self.ants_move_y, a_min = 0, a_max = ymax)
         self.ants_pos_x = np.clip( self.ants_pos_x + self.ants_move_x, a_min = 0, a_max = xmax)
-    
-    def i_have_food(self, food_layer: np.array) -> None:
+        
+        
+    def i_have_food(self, food_pts_x: np.array, food_pts_y: np.array) -> None:
         
         '''
-            food_layer: 3 channel image
-            food_bool: np.array([bool values])
+            #*Structured Arrays
+            https://numpy.org/doc/stable/user/basics.rec.html
+            food_pts: np.array([(y1, x1, (y2, x2), ...], dtype = [('y', np.uint8), ('x', np.uint8)])
             example: self.food_bool([True, True, False, ..]) means that ants 
             with indexes 0 and 1 have food, whereas ant 2 have not.
         
             Implement a method to verify if an ant is over the food or not
+            https://numpy.org/doc/stable/reference/generated/numpy.in1d.html
+        
         '''
+        food_bool_x = np.in1d(self.ants_pos_x, food_pts_x)
+        food_bool_y = np.in1d(self.ants_pos_y, food_pts_y)
 
-
+        self.ive_food = self.food_bool_x * self.food_bool_y
 

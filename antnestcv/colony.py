@@ -29,9 +29,7 @@ class Colony:
         self.food_array = np.zeros(shape = (1, self.init_num_ants), dtype= int)
 
         self.ive_food = np.zeros(shape = (1, self.init_num_ants), dtype = bool)
-        # self.food_bool_x = np.zeros(shape = (1, self.init_num_ants), dtype = bool)
-        # self.food_bool_y = np.zeros(shape = (1, self.init_num_ants), dtype= bool)
-
+        
     def init_ants(self):
         ant_list = []
         
@@ -64,7 +62,7 @@ class Colony:
         self.ants_pos_x = np.clip( self.ants_pos_x + self.ants_move_x, a_min = 0, a_max = xmax)
         
         
-    def i_have_food(self, food_pts_x: np.array, food_pts_y: np.array) -> None:
+    def i_have_food(self, do_you_have_food: np.array(bool)) -> None:
         
         '''
             #*Structured Arrays
@@ -77,8 +75,6 @@ class Colony:
             https://numpy.org/doc/stable/reference/generated/numpy.in1d.html
         
         '''
-        food_bool_x = np.in1d(self.ants_pos_x, food_pts_x)
-        food_bool_y = np.in1d(self.ants_pos_y, food_pts_y)
-
-        self.ive_food = self.food_bool_x * self.food_bool_y
+        self.ive_food = do_you_have_food
+        ...
 

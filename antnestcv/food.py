@@ -17,7 +17,7 @@ class Food:
             y_contour = self.y_contours,
             percent = 0.02)
 
-        self.lift_food = np.zeros(shape = (1, self.area), dtype = bool)
+        self.do_you_have_food = np.zeros(shape = (1, self.area), dtype = bool)
 
         
     @staticmethod
@@ -86,13 +86,13 @@ class Food:
         # food_pts = np.array([(food_y[i], food_x[i]) for i in range(n_pts)],
         #                     dtype = [('y', np.uint32), ('x', np.uint32)])
         return food_pts_x, food_pts_y
-
+    
     def ant_detection(self, ants_pos_x: np.array, ants_pos_y: np.array) -> None:
         
         food_bool_x = np.in1d(ants_pos_x, self.food_pts_x)
         food_bool_y = np.in1d(ants_pos_y, self.food_pts_y)        
         
-        self.lift_food = food_bool_x * food_bool_y        
+        self.do_you_have_food = food_bool_x * food_bool_y        
         
         
     def update_food(self, ants_pos_x: np.array, ants_pos_y: np.array) -> None:
@@ -100,14 +100,14 @@ class Food:
             #TODO:
             1. Try to remove a list of points instead of just removing one
                 self.food_pts = self.food_pts[array([True, True, False, ..])]
-            #!2. There's something wrong with self.lift_food. When num_ants = n,
-                self.lift_food.shape is assuming even n^2: #* Solved
+            #!2. There's something wrong with self.do_you_have_food. When num_ants = n,
+                self.do_you_have_food.shape is assuming even n^2: #* Solved
         '''
 
         self.ant_detection(ants_pos_x = ants_pos_x, ants_pos_y = ants_pos_y)
                 
-        remove_pts_x = ants_pos_x[self.lift_food]
-        remove_pts_y = ants_pos_y[self.lift_food]
+        remove_pts_x = ants_pos_x[self.do_you_have_food]
+        remove_pts_y = ants_pos_y[self.do_you_have_food]
         
         
         self.food_layer[remove_pts_y, remove_pts_x] = [0, 0, 0]

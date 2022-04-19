@@ -61,6 +61,7 @@ class Animation:
 
         while True:
             
+            #Update ant's positions and food
             self.update_state(colony_list = colony_list)
             
             #scene: background + food  

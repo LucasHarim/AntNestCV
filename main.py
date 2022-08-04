@@ -15,7 +15,7 @@ background_img = np.zeros_like(food_img)
 
 spartans = Colony(   name='Spartans',
                         init_num_ants = 500,
-                        spawn_position = {'x': 200, 'y': 200},
+                        spawn_position = {'x': 0, 'y': 0},
                         color = {'b': 250, 'g':0, 'r':200})
 
 persas = Colony(   name='Persas',

@@ -55,6 +55,7 @@ class Animation:
             self.ants_layer[colony.ants_pos_y, colony.ants_pos_x, 2] = colony.color['r']
 
             #*Update food:
+            colony.path_planner(food_thresh_img = self.food.thresh)
             self.food.update_food(ants_pos_x = colony.ants_pos_x, ants_pos_y = colony.ants_pos_y)
 
     def display(self, colony_list: list, wait_key: int = 1):

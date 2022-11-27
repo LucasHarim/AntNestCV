@@ -1,6 +1,6 @@
 # AntNestCV (In progress)
 
-![ants_frames](resources/frames.gif)
+![ants_frames](resources/frame.png)
 
 Simple project implementing colony behavior using numpy and OpenCV.
 
@@ -10,4 +10,4 @@ TODO:
 2. Implement trail pheromone
 3. Ants' behaviors to detect the trail and back to the colony
 4. Food release
-
+5. Fix low fps gifs

@@ -15,11 +15,11 @@ class Colony:
             color: {'r': int, 'g': int, 'b': int}
         '''
 
-        self.name = name
-        self.init_num_ants = init_num_ants
-        self.spawn_position = spawn_position
-        self.color = color
-
+        self.name: str = name
+        self.init_num_ants: int = init_num_ants
+        self.spawn_position: dict = spawn_position
+        self.color: dict = color
+        
         self.ants_pos_y = self.spawn_position['y']*np.ones(shape = (self.init_num_ants), dtype= int)
         self.ants_pos_x = self.spawn_position['x']*np.ones(shape = (self.init_num_ants), dtype= int)
         self.positions = None

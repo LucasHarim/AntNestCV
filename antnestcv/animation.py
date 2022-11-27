@@ -29,7 +29,7 @@ class Animation:
         # to update this code
           
 
-    def update_state(self, colony_list: list):
+    def update_state(self, colony_list: list) -> None:
         
         '''
                 blue ant: channel 0
@@ -58,8 +58,9 @@ class Animation:
             colony.path_planner(food_thresh_img = self.food.thresh)
             self.food.update_food(ants_pos_x = colony.ants_pos_x, ants_pos_y = colony.ants_pos_y)
 
-    def display(self, colony_list: list, wait_key: int = 1):
+    def display(self, colony_list: list, wait_key: int = 1) -> None:
 
+        i_frame = 0
         while True:
             
             #Update ant's positions and food
@@ -76,12 +77,18 @@ class Animation:
                                         src2 = self.ants_layer, beta = 1,
                                         gamma = 1)
             
-            cv2.namedWindow('scene',cv2.WINDOW_GUI_EXPANDED)
+            # cv2.namedWindow('scene',cv2.WINDOW_GUI_EXPANDED)
             cv2.imshow('scene', scene)
             
-            
+            # if i_frame % 2 == 0:
+
+            #     cv2.imwrite(f'frames/frame_0{i_frame}.png', scene)
+            # i_frame += 1
+
             k = cv2.waitKey(wait_key) & 0xff
             if k == 27:
                 break
+        
+        cv2.destroyAllWindows()
 
-            
+        return scene

@@ -4,14 +4,14 @@ import cv2
 class Food:
     def __init__(self, food_layer: np.array):
         
-        self.food_layer = food_layer
+        self.food_layer: np.array = food_layer
         self.image_bw: np.array = cv2.cvtColor(self.food_layer, cv2.COLOR_BGR2GRAY)
         _ , self.thresh = cv2.threshold(self.image_bw, 0, 255, 0)
         
-        self.area = len(np.nonzero(self.thresh)[0])
+        self.area: int = len(np.nonzero(self.thresh)[0])
         
-        self.food_pts_x, self.food_pts_y = self.food_pts(thresh = self.thresh)
-        self.x_contours, self.y_contours = self.find_food_contours(thresh = self.thresh) 
+        self.food_pts_x, self.food_pts_y = self.food_pts(thresh = self.thresh) #list, list
+        self.x_contours, self.y_contours = self.find_food_contours(thresh = self.thresh) #list, list
         self.some_x_contours, self.some_y_contours = self.some_pts_in_contour(
             x_contour = self.x_contours,
             y_contour = self.y_contours,
@@ -53,6 +53,17 @@ class Food:
     @staticmethod
     def some_pts_in_contour(x_contour: list, y_contour: list, percent: float) -> list:
         
+        '''
+            Obtem uma lista de pontos pertencentes ao contorno. Os pontos sao
+            igualmente espacados.
+
+            x_contour: pts em x pertencentes ao contorno
+            y_contour: pts em y pertencentes ao contorno
+
+            percent: porcentagem de pontos selecionados
+        '''
+
+
         assert len(x_contour) == len(y_contour)
         
         
@@ -72,8 +83,10 @@ class Food:
         y_of_interest = y_contour[:new_length:q]
         return x_of_interest, y_of_interest
     
+
     @staticmethod
     def food_pts(thresh) -> list:
+
         '''
             #*Structured Arrays
             https://numpy.org/doc/stable/user/basics.rec.html
@@ -87,12 +100,22 @@ class Food:
         #                     dtype = [('y', np.uint32), ('x', np.uint32)])
         return food_pts_x, food_pts_y
     
+    
     def ant_detection(self, ants_pos_x: np.array, ants_pos_y: np.array) -> None:
         
+        '''
+            A ideia é verificar quais formigas estao sobre a comida.
+            De forma ideal, self.do_you_have_food deve retornar um array
+            de Trues e Falses que refletem a presenca ou nao de formigas sobre
+            a comida. Porem talvez este metodo talvez esteja passivo de erro.
+            Ler o comentario (*) em vermelho na funcao update_food().
+
+        '''
+
         food_bool_x = np.in1d(ants_pos_x, self.food_pts_x)
         food_bool_y = np.in1d(ants_pos_y, self.food_pts_y)        
         
-        self.do_you_have_food = food_bool_x * food_bool_y        
+        self.do_you_have_food = food_bool_x * food_bool_y
         
         
     def update_food(self, ants_pos_x: np.array, ants_pos_y: np.array) -> None:
@@ -109,7 +132,10 @@ class Food:
         remove_pts_x = ants_pos_x[self.do_you_have_food]
         remove_pts_y = ants_pos_y[self.do_you_have_food]
         
-        
+        #!(*)
+        #! Se trocar [0, 0, 0] por alguma outra cor detectavel, pode-se verificar
+        #! que a funcao ant_detection nao esta funcionando. Na verdade as formigas 
+        #! marcando todas as posicoes em que passam.
         self.food_layer[remove_pts_y, remove_pts_x] = [0, 0, 0]
         self.image_bw[remove_pts_y, remove_pts_x] = 0
         self.thresh[remove_pts_y, remove_pts_x] = 0

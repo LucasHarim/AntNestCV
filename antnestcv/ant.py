@@ -62,7 +62,7 @@ class Ant:
 
         '''
             #TODO: 
-            1. AddAjeitar o movimento aleatório para nao permitir 
+            1. Corrigir o movimento aleatório para nao permitir 
                 sair de 0 -> ymax, xmax
             2. Add 'grab/catch food' and colision functions
             3. Improve lift_food function. I need to implement a more sofisti_

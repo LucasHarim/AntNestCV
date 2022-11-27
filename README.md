@@ -1,6 +1,7 @@
 # AntNestCV (In progress)
 
-![ants_frames](resources/frame.png)
+<center><img src = "resources/frame.png" width = 500></center>
+
 
 Simple project implementing colony behavior using numpy and OpenCV.
 
